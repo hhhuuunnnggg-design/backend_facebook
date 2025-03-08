@@ -55,10 +55,11 @@ public class UserService {
         res.setEmail(user.getEmail());
         res.setBirthday(user.getBirthday());
         res.setCreatedAt(user.getCreatedAt());
-        res.setGender(user.getGender());
-        res.setFullname(user.getLatename()+user.getFirstname());
+        res.setGender(user.getGender().name());
+        res.setFullname(user.getLatename() +" "+ user.getFirstname());
         return res;
     }
+
     public boolean isEmailExist(String email) {
         return this.userRepository.existsByEmail(email);
     }

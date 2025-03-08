@@ -2,6 +2,7 @@ package com.example.demo.domain;
 
 
 import com.example.demo.domain.Enum.genderEnum;
+import com.example.demo.domain.converter.LocalDateConverter;
 import com.example.demo.util.SecurityUtil;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -39,10 +40,11 @@ public class User {
     String latename;
 
     @Column(name = "birthday")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
-    @DateTimeFormat(pattern = "dd/MM/yyyy") // Spring format
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy") // Định dạng JSON trả về
+    @DateTimeFormat(pattern = "dd/MM/yyyy") // Định dạng dữ liệu từ request
+    private LocalDate birthday;
 
-    LocalDate birthday;
+
     Instant createdAt;
     // (lam ve role sau)
     //Long role_id;
