@@ -4,6 +4,7 @@ package com.example.demo.domain;
 import com.example.demo.domain.Enum.genderEnum;
 import com.example.demo.util.SecurityUtil;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -48,9 +49,11 @@ public class User {
     Boolean active;
 
     @OneToMany(mappedBy = "user1")
+    @JsonIgnore
     List<Message> sentMessages;
 
     @OneToMany(mappedBy = "user2")
+    @JsonIgnore
     List<Message> receivedMessages;
 
 
