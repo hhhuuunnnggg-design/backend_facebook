@@ -15,6 +15,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
@@ -37,7 +38,7 @@ public class User {
     String latename;
 
     @Column(name = "birthday")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy") // JSON format
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     @DateTimeFormat(pattern = "dd/MM/yyyy") // Spring format
 
     LocalDate birthday;
@@ -45,6 +46,13 @@ public class User {
     // (lam ve role sau)
     //Long role_id;
     Boolean active;
+
+    @OneToMany(mappedBy = "user1")
+    List<Message> sentMessages;
+
+    @OneToMany(mappedBy = "user2")
+    List<Message> receivedMessages;
+
 
     @PrePersist
     public void handleBeforeCreate(){
