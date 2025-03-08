@@ -27,7 +27,7 @@ import java.util.List;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long id;
+    Long id;
 
     @NotBlank(message = "email không được để trống")
     String email;
@@ -46,7 +46,7 @@ public class User {
 
 
     Instant createdAt;
-    // (lam ve role sau)
+    //(lam ve role sau)
     //Long role_id;
     Boolean active;
 
@@ -57,6 +57,12 @@ public class User {
     @OneToMany(mappedBy = "user2")
     @JsonIgnore
     List<Message> receivedMessages;
+
+    @OneToMany(mappedBy = "user_sent_report")
+    List<Report> sentreports;
+
+    @OneToMany(mappedBy = "user_received_report")
+    List<Report> receivedreports;
 
 
     @PrePersist
