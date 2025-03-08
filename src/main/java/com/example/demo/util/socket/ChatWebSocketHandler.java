@@ -2,6 +2,7 @@ package com.example.demo.util.socket;
 
 import com.example.demo.domain.Message;
 import com.example.demo.domain.User;
+import com.example.demo.domain.response.MessageDTO;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.MessageService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,6 +14,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
@@ -27,7 +29,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         this.messageService = messageService;
         this.userRepository = userRepository;
         this.objectMapper = new ObjectMapper();
-        this.objectMapper.registerModule(new JavaTimeModule()); // Hỗ trợ LocalDate
+        this.objectMapper.registerModule(new JavaTimeModule());
     }
 
     @Override
@@ -40,8 +42,10 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+        // Lấy senderId từ URL thay vì JSON
+        Long senderId = Long.valueOf(session.getUri().getQuery().split("=")[1]);
+        // Parse JSON chỉ cần receiverId và content
         Map<String, String> data = objectMapper.readValue(message.getPayload(), Map.class);
-        Long senderId = Long.valueOf(data.get("senderId"));
         Long receiverId = Long.valueOf(data.get("receiverId"));
         String content = data.get("content");
 
@@ -51,7 +55,11 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
             Message msg = messageService.saveMessage(sender, receiver, content);
             WebSocketSession receiverSession = sessions.get(receiverId);
             if (receiverSession != null && receiverSession.isOpen()) {
-                receiverSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(msg)));
+                String firstname = Objects.toString(sender.getFirstname(), "");
+                String latename = Objects.toString(sender.getLatename(), "");
+                String fullname = (firstname + " " + latename).trim();
+                MessageDTO messageDTO = new MessageDTO(msg.getContent(), fullname, sender.getEmail());
+                receiverSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(messageDTO)));
             }
         }
     }
